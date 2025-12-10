@@ -190,8 +190,12 @@ double Astarpath::getHeu(MappingNodePtr node1, MappingNodePtr node2) {
   // 使用数字距离和一种类型的tie_breaker
   double heu;
   double tie_breaker;
-  
-  return heu;
+   double dx = fabs(node1->coord(0) - node2->coord(0));
+  double dy = fabs(node1->coord(1) - node2->coord(1));
+  double dz = fabs(node1->coord(2) - node2->coord(2));
+  heu = dx + dy + dz;                 // 数字距离
+  tie_breaker = 1.0 + 1.0 / 1000.0;   // 轻微打破对称
+  return heu * tie_breaker;
 }
 
 
@@ -247,11 +251,16 @@ bool Astarpath::AstarSearch(Vector3d start_pt, Vector3d end_pt) {
 
   while (!Openset.empty()) {
     //1.弹出g+h最小的节点
-    //????
+    currentPtr = Openset.begin()->second;
+    Openset.erase(Openset.begin());
+    currentPtr->id = -1; 
     //2.判断是否是终点
-    //????
+    if (currentPtr->index == goalIdx) {
+      terminatePtr = currentPtr;
+      return true;
+    }
     //3.拓展当前节点
-    //????
+    AstarGetSucc(currentPtr, neighborPtrSets, edgeCostSets);
     for(unsigned int i=0;i<neighborPtrSets.size();i++)
     {
       
@@ -266,12 +275,21 @@ bool Astarpath::AstarSearch(Vector3d start_pt, Vector3d end_pt) {
       if(neighborPtr->id==0)
       {
         //4.填写信息，完成更新
-        //???
+        neighborPtr->g_score = tentative_g_score;
+        neighborPtr->Father   = currentPtr;
+        neighborPtr->f_score  = tentative_g_score + getHeu(neighborPtr, endPtr);
+        neighborPtr->id       = 1;
+        Openset.insert({neighborPtr->f_score, neighborPtr});
         continue;
       }
       else if(neighborPtr->id==1)
       {
-        //???
+        if(neighborPtr->g_score > tentative_g_score){
+          neighborPtr->g_score = tentative_g_score;
+          neighborPtr->Father = currentPtr;
+          neighborPtr->f_score = tentative_g_score + getHeu(neighborPtr, endPtr);
+          Openset.insert(make_pair(neighborPtr->f_score, neighborPtr));
+        }
       continue;
       }
     }
@@ -300,7 +318,8 @@ terminatePtr=terminatePtr->Father;
    *
    * **/
 
-  // ???
+  for (auto it = front_path.rbegin(); it != front_path.rend(); ++it)
+  path.push_back((*it)->coord);
 
   return path;
 }
