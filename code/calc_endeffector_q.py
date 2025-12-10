@@ -79,7 +79,7 @@ for ti, qi in zip(t, q_WB):
     results.append([ti, *q_WD])
 
 out = pd.DataFrame(results, columns=['t', 'qw', 'qx', 'qy', 'qz'])
-out.to_csv('solutions/endEffector_q.csv', index=False, float_format='%.7f')
+out.to_csv('../solutions/endEffector_q.csv', index=False, float_format='%.7f')
 
 #画图
 plt.figure(figsize=(6, 4))
@@ -89,5 +89,5 @@ plt.xlabel('t [s]')
 plt.ylabel('quaternion')
 plt.legend()
 plt.tight_layout()
-plt.savefig('solutions/endEffector_q.png', dpi=300)
+plt.savefig('../solutions/endEffector_q.png', dpi=300)
 print('endEffector_q.csv & .png 已生成')
