@@ -238,11 +238,6 @@ bool Astarpath::AstarSearch(Vector3d start_pt, Vector3d end_pt) {
 
   // 将 Start 节点放在 Open Set 中
   startPtr->g_score = 0;
-  /**
-   *
-   * STEP 1.1:  完成 Astarpath::getHeu
-   *
-   * **/
   startPtr->f_score = getHeu(startPtr, endPtr);
 
   
